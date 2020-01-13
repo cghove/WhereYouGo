@@ -56,7 +56,9 @@
         android:layout_centerHorizontal="true"
         android:autoLink="web"
         android:background="#7fffffff"
+        android:textAllCaps="true"
         android:textColor="@android:color/black"
-        android:textSize="10sp" />
+        android:textSize="14sp"
+        android:textStyle="bold|italic" />
 
 </RelativeLayout>
