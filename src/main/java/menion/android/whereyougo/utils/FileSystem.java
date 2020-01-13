@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
 
-import menion.android.whereyougo.MainApplication;
-
 /**
  * @author menion
  * @since 25.1.2010 2010

@@ -17,8 +17,6 @@
 
 package menion.android.whereyougo.preferences;
 
-import menion.android.whereyougo.MainApplication;
-
 public class Locale {
 
     public static String getString(int string) {

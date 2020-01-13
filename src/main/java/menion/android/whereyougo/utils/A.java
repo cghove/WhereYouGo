@@ -20,7 +20,6 @@ package menion.android.whereyougo.utils;
 import android.app.Application;
 
 import menion.android.whereyougo.BuildConfig;
-import menion.android.whereyougo.MainApplication;
 import menion.android.whereyougo.audio.ManagerAudio;
 import menion.android.whereyougo.geo.orientation.Orientation;
 import menion.android.whereyougo.gui.extension.activity.CustomMainActivity;
