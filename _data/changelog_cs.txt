@@ -1,10 +1,9 @@
-Přidána podpora pro GIF a MP4.
-Překlady: Norwegian, Catalan, German, French, Japanese.
-Klikatelné odkazy v textu.
-Opraveny stavy úkolů, vylepšeny ikony.
-Opraveno občasné padání aplikace při používání timeru či při ukončování aplikace.
-Podrobnější chyby při stahování cartridge.
-Vstup lze skenovat z QR kódu.
-Mapy lze vycentrovat na cíl.
-Opraven problém při vybírání map na Androidu 7.
-Opraven problém s kompasem pokud je aktivní timer.
+! Uložené hry z verze 0.6.0 a nižší nejsou kompatibilní s aktuální verzí !
+
+0.9.0
+Ukládací sloty.
+Lze spustit wherigo z mapy.
+Vylepšeno nastavení složky s Wherigo.
+Opraveno stahování z wherigo.com.
+Pomocí Sdílet lze odkaz na wherigo poslat do WhereYouGo ke stažení.
+atd...
