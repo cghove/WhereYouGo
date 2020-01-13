@@ -17,6 +17,9 @@
     <string-array name="mapgenerator_values">
         <item>blank</item>
         <item>map-fil [*.map] (offline)</item>
+        <item>norgeskart_4 (online)</item>
+        <item>Topografisk_rasterkart_3 (online)</item>
+        <item>Google_Hybrid (online)</item>
         <item>OSM Mapnik (online)</item>
         <item>OSM.de (online)</item>
         <item>OpenCycleMap (online)</item>

@@ -18,6 +18,9 @@
     <string-array name="mapgenerator_keys">
         <item>BLANK</item>
         <item>DATABASE_RENDERER</item>
+        <item>norgeskart_4</item>
+        <item>Topografisk_rasterkart_3</item>
+        <item>Google_Hybrid</item>
         <item>OPENSTREETMAP</item>
         <item>OPENSTREETMAP_DE</item>
         <item>OPENCYCLEMAP_CYCLE</item>

@@ -17,6 +17,9 @@
     <string-array name="mapgenerator_values">
         <item>空</item>
         <item>地図ファイル [*.map] (オフライン)</item>
+        <item>norgeskart_4 (online)</item>
+        <item>Topografisk_rasterkart_3 (online)</item>
+        <item>Google_Hybrid (online)</item>
         <item>OSM Mapnik (オンライン)</item>
         <item>OSM.de (オンライン)</item>
         <item>OpenCycleMap (オンライン)</item>
