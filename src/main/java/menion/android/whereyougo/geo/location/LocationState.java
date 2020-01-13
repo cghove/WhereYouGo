@@ -33,7 +33,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import menion.android.whereyougo.MainApplication;
 import menion.android.whereyougo.R;
 import menion.android.whereyougo.gui.activity.SatelliteActivity;
 import menion.android.whereyougo.gui.utils.UtilsGUI;

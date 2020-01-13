@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import menion.android.whereyougo.MainApplication;
 import menion.android.whereyougo.R;
 import menion.android.whereyougo.geo.location.LocationState;
 import menion.android.whereyougo.gui.utils.UtilsGUI;

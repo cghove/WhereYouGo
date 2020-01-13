@@ -18,7 +18,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import ar.com.daidalos.afiledialog.FileChooserDialog;
-import menion.android.whereyougo.MainApplication;
 import menion.android.whereyougo.R;
 import menion.android.whereyougo.gui.extension.activity.CustomMainActivity;
 import menion.android.whereyougo.gui.utils.UtilsGUI;

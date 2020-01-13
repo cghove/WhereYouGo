@@ -24,7 +24,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,7 +32,6 @@ import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -47,7 +45,6 @@ import cz.matejcik.openwig.Engine;
 import cz.matejcik.openwig.formats.CartridgeFile;
 import locus.api.objects.extra.Location;
 import locus.api.objects.extra.Waypoint;
-import menion.android.whereyougo.MainApplication;
 import menion.android.whereyougo.R;
 import menion.android.whereyougo.VersionInfo;
 import menion.android.whereyougo.geo.location.LocationState;
@@ -67,7 +64,6 @@ import menion.android.whereyougo.openwig.WUI;
 import menion.android.whereyougo.preferences.Locale;
 import menion.android.whereyougo.preferences.Preferences;
 import menion.android.whereyougo.utils.A;
-import menion.android.whereyougo.utils.Const;
 import menion.android.whereyougo.utils.FileSystem;
 import menion.android.whereyougo.utils.Logger;
 import menion.android.whereyougo.utils.ManagerNotify;
@@ -403,10 +399,10 @@ public class MainActivity extends CustomMainActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_geocaching:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://geocaching.com/")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://geocaching.com/")));
                 return true;
             case R.id.menu_wherigo:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://wherigo.com/")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wherigo.com/")));
                 return true;
             case R.id.menu_github:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/biylda/WhereYouGo")));
