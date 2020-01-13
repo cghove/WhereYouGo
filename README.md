@@ -88,10 +88,20 @@ and register the following files for change detection:
 
 ## What's new
 <h4>
+	<a name="#1.9.5cghove"></a>
+	1.9.5cghove (12. 01. 2020)
+	<ul>
+	<li>Fixed bug where cartridges can't be downloaded due to http: vs https: issue.</li>
+	<li>Added Maps from Norgeskart</li>
+	<li>This version will not end up on google playstore</li>
+	<a href="#1.9.5cghove" class="section_anchor"></a>
+	</ul>
+</h4>
+<ul><h4>
 	<a name="#0.9.3"></a>
 	0.9.3 (14. 7. 2017)
 	<a href="#0.9.3" class="section_anchor"></a>
-</h4>
+</h4></ul>
 <p>
   <ul>
         <li>Added support for animated GIF and MP4.</li>
