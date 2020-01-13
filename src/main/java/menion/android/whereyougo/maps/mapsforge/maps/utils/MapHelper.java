@@ -26,6 +26,9 @@ import locus.api.android.ActionDisplayTracks;
 import locus.api.android.ActionTools;
 import locus.api.android.utils.LocusUtils;
 import locus.api.android.utils.exceptions.RequiredVersionMissingException;
+import menion.android.whereyougo.gui.activity.MainActivity;
+import menion.android.whereyougo.gui.utils.UtilsWherigo;
+import menion.android.whereyougo.maps.mapsforge.MapsforgeActivity;
 import menion.android.whereyougo.preferences.PreferenceValues;
 import menion.android.whereyougo.preferences.Preferences;
 import menion.android.whereyougo.utils.Logger;
@@ -59,13 +62,12 @@ public class MapHelper {
 
     public static void vectorMap(Activity activity, EventTable et) {
         boolean navigate = et != null && et.isLocated();
-        boolean center = navigate;
 
-        Intent intent =
-                new Intent(activity, menion.android.whereyougo.maps.mapsforge.MapsforgeActivity.class);
+        Intent intent = new Intent(activity, MapsforgeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        intent.putExtra("center", center);
-        intent.putExtra("navigate", navigate);
+        intent.putExtra(MapsforgeActivity.BUNDLE_CENTER, navigate);
+        intent.putExtra(MapsforgeActivity.BUNDLE_NAVIGATE, navigate);
+        intent.putExtra(MapsforgeActivity.BUNDLE_ALLOW_START_CARTRIDGE, activity instanceof MainActivity);
         activity.startActivity(intent);
     }
 
@@ -75,16 +77,7 @@ public class MapHelper {
             ActionDisplayPoints.sendPack(activity, mdp.getPoints(), ExtraAction.NONE);
             ActionDisplayTracks.sendTracks(activity, mdp.getTracks(), ExtraAction.CENTER);
             if (et != null && et.isLocated()) {
-                locus.api.objects.extra.Location loc =
-                        new locus.api.objects.extra.Location(activity.toString());
-                if (et instanceof Zone) {
-                    Zone z = ((Zone) et);
-                    loc.setLatitude(z.nearestPoint.latitude);
-                    loc.setLongitude(z.nearestPoint.longitude);
-                } else {
-                    loc.setLatitude(et.position.latitude);
-                    loc.setLongitude(et.position.longitude);
-                }
+                locus.api.objects.extra.Location loc = UtilsWherigo.extractLocation(et);
                 locus.api.objects.extra.Waypoint wpt = new locus.api.objects.extra.Waypoint(et.name, loc);
                 ActionTools.actionStartGuiding(activity, wpt);
             }

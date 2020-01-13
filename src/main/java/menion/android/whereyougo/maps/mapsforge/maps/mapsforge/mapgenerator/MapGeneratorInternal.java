@@ -27,6 +27,20 @@ public enum MapGeneratorInternal {
      * Map tiles are rendered offline.
      */
     DATABASE_RENDERER,
+    /**
+     * Topografisk norges kart.
+     */
+    norgeskart_4,
+
+    /**
+     * norges kart raster.
+     */
+    Topografisk_rasterkart_3,
+
+    /**
+     * Google kart.
+     */
+    Google_Hybrid,
 
     /**
      * Map tiles are downloaded from http://openstreetmap.org

@@ -14,6 +14,7 @@
  */
 package menion.android.whereyougo.maps.mapsforge.mapgenerator;
 
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 
 import org.mapsforge.android.maps.mapgenerator.MapGenerator;
@@ -55,6 +56,19 @@ public final class MapGeneratorFactory {
                 return new Blank();
             case DATABASE_RENDERER:
                 return new DatabaseRenderer();
+            case norgeskart_4:
+                return new FormatURLTileDownloader(
+                        19,
+                        "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}", "\u00a9 <a href='http://www.statkart.no/'>Kartverket</a>");
+            case Topografisk_rasterkart_3:
+                return new FormatURLTileDownloader(
+                        19,
+                        "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster3&zoom={z}&x={x}&y={y}", "\u00a9 <a href='http://www.statkart.no/'>Kartverket</a>");
+            case Google_Hybrid:
+                return new FormatURLTileDownloader(
+                        19,
+                        "http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}&s=Ga", "\u00a9 Google Maps");
+
             case OPENSTREETMAP:
                 return new FormatURLTileDownloader(
                         18,

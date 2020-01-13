@@ -34,16 +34,17 @@ import locus.api.objects.extra.Track;
 import locus.api.objects.extra.Waypoint;
 import menion.android.whereyougo.gui.activity.MainActivity;
 import menion.android.whereyougo.gui.activity.wherigo.DetailsActivity;
+import menion.android.whereyougo.gui.utils.UtilsWherigo;
 import menion.android.whereyougo.preferences.PreferenceValues;
 import menion.android.whereyougo.preferences.Preferences;
 
 public class LocusMapDataProvider implements MapDataProvider {
     private static LocusMapDataProvider instance = null;
     private ArrayList<Track> tracks = null;
-    private PackWaypoints pack;
+    private final PackWaypoints pack;
 
     private LocusMapDataProvider() {
-        tracks = new ArrayList<Track>();
+        tracks = new ArrayList<>();
         pack = new PackWaypoints("WhereYouGo");
     }
 
@@ -53,24 +54,8 @@ public class LocusMapDataProvider implements MapDataProvider {
         return instance;
     }
 
-    public static Waypoint locusMapWaypoint(EventTable et) {
-        if (et == null || !et.isLocated() || !et.isVisible())
-            return null;
-
-        Location loc = new Location();
-        if (et instanceof Zone) {
-            Zone z = ((Zone) et);
-            loc.setLatitude(z.nearestPoint.latitude);
-            loc.setLongitude(z.nearestPoint.longitude);
-        } else {
-            loc.setLatitude(et.position.latitude);
-            loc.setLongitude(et.position.longitude);
-        }
-        return new Waypoint(et.name, loc);
-    }
-
     public void addAll() {
-        Vector<CartridgeFile> v = new Vector<CartridgeFile>();
+        Vector<CartridgeFile> v = new Vector<>();
         v.add(MainActivity.cartridgeFile);
         addCartridges(v);
         addZones((Vector<Zone>) Engine.instance.cartridge.zones, DetailsActivity.et);
@@ -105,16 +90,7 @@ public class LocusMapDataProvider implements MapDataProvider {
         if (et == null || !et.isLocated() || !et.isVisible())
             return;
 
-        Location loc = new Location("");
-        if (et instanceof Zone
-                && Preferences.GUIDING_ZONE_NAVIGATION_POINT == PreferenceValues.VALUE_GUIDING_ZONE_POINT_NEAREST) {
-            Zone z = ((Zone) et);
-            loc.setLatitude(z.nearestPoint.latitude);
-            loc.setLongitude(z.nearestPoint.longitude);
-        } else {
-            loc.setLatitude(et.position.latitude);
-            loc.setLongitude(et.position.longitude);
-        }
+        Location loc = UtilsWherigo.extractLocation(et);
         pack.addWaypoint(new Waypoint(et.name, loc));
     }
 
@@ -122,7 +98,7 @@ public class LocusMapDataProvider implements MapDataProvider {
         if (z == null || !z.isLocated() || !z.isVisible())
             return;
 
-        ArrayList<Location> locs = new ArrayList<Location>();
+        ArrayList<Location> locs = new ArrayList<>();
         for (int i = 0; i < z.points.length; i++) {
             Location loc = new Location("");
             loc.setLatitude(z.points[i].latitude);

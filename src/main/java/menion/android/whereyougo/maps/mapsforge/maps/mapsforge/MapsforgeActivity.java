@@ -131,9 +131,13 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     /**
      * The maximum icon size.
      */
-    public static final int ICON_SIZE_MAX = 32;
+    private static final int ICON_SIZE_MAX = 32;
 
     private static final String KEY_MAP_GENERATOR = "mapGenerator"; // store map generator
+    public static final String BUNDLE_CENTER = "center";
+    public static final String BUNDLE_NAVIGATE = "navigate";
+    public static final String BUNDLE_ITEMS = "items";
+    public static final String BUNDLE_ALLOW_START_CARTRIDGE = "allowStartCartridge";
     private static final String BUNDLE_CENTER_AT_FIRST_FIX = "centerAtFirstFix";
     private static final String BUNDLE_SHOW_MY_LOCATION = "showMyLocation";
     private static final String BUNDLE_SNAP_TO_LOCATION = "snapToLocation";
@@ -146,6 +150,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     private static final FileFilter FILE_FILTER_EXTENSION_XML = new FilterByFileExtension(".xml");
     private static final int SELECT_MAP_FILE = 0;
     private static final int SELECT_RENDER_THEME_FILE = 1;
+    private final Object lock = new Object();
     MyMapView mapView;
     private MapGeneratorInternal mapGeneratorInternal = MapGeneratorInternal.BLANK;
     private PointListOverlay listOverlay;
@@ -158,18 +163,21 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     private double itemsLatitude, itemsLongitude;
     private boolean showPins = true;
     private boolean showLabels = true;
-    private TapEventListener tapListener = new TapEventListener() {
+    private boolean allowStartCartridge = false;
+    private final TapEventListener tapListener = new TapEventListener() {
         @Override
         public void onTap(final PointOverlay pointOverlay) {
             if (pointOverlay.getPoint() == null)
                 return;
             // final MapPoint p = pointOverlay.getPoint();
             //MapsforgeActivity.this.navigationOverlay.setTarget(pointOverlay.getGeoPoint());
+            TextView textView = (TextView) View.inflate(MapsforgeActivity.this, R.layout.point_detail_view, null);
+            textView.setText(UtilsFormat.formatGeoPoint(pointOverlay.getGeoPoint()) + "\n\n"
+                    + Html.fromHtml(pointOverlay.getDescription()));
+
             AlertDialog.Builder builder = new AlertDialog.Builder(MapsforgeActivity.this)
                     .setTitle(pointOverlay.getLabel())
-                    .setMessage(
-                            UtilsFormat.formatGeoPoint(pointOverlay.getGeoPoint()) + "\n\n"
-                                    + Html.fromHtml(pointOverlay.getDescription(), null, null))
+                    .setView(textView)
                     .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
@@ -177,7 +185,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
                         }
                     });
             final String cguid = pointOverlay.getPoint().getData();
-            if (cguid != null)
+            if (allowStartCartridge && cguid != null)
                 builder.setPositiveButton(R.string.start, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -239,7 +247,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     /**
      * @param showToast defines whether a toast message is displayed or not.
      */
-    void disableSnapToLocation(boolean showToast) {
+    private void disableSnapToLocation(boolean showToast) {
         if (this.myLocationOverlay.isSnapToLocationEnabled()) {
             this.myLocationOverlay.setSnapToLocationEnabled(false);
             this.snapToLocationView.setChecked(false);
@@ -271,7 +279,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     /**
      * @param showToast defines whether a toast message is displayed or not.
      */
-    void enableSnapToLocation(boolean showToast) {
+    private void enableSnapToLocation(boolean showToast) {
         if (!this.myLocationOverlay.isSnapToLocationEnabled()) {
             this.myLocationOverlay.setSnapToLocationEnabled(true);
             this.snapToLocationView.setChecked(true);
@@ -307,7 +315,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
         }
     }
 
-    void invertSnapToLocation() {
+    private void invertSnapToLocation() {
         if (this.myLocationOverlay.isSnapToLocationEnabled()) {
             disableSnapToLocation(true);
         } else {
@@ -369,6 +377,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
         if (savedInstanceState != null) {
             this.showPins = savedInstanceState.getBoolean(BUNDLE_SHOW_PINS, true);
             this.showLabels = savedInstanceState.getBoolean(BUNDLE_SHOW_LABELS, true);
+            this.allowStartCartridge = savedInstanceState.getBoolean(BUNDLE_ALLOW_START_CARTRIDGE, false);
         } else {
             this.showPins = sharedPreferences.getBoolean(BUNDLE_SHOW_PINS, true);
             this.showLabels = sharedPreferences.getBoolean(BUNDLE_SHOW_LABELS, true);
@@ -480,11 +489,14 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
                             double longitude_d = Double.parseDouble(((EditText) view.findViewById(R.id.longitude_d)).getText().toString());
                             double longitude_m = Double.parseDouble(((EditText) view.findViewById(R.id.longitude_m)).getText().toString());
                             double longitude = longitude_d + longitude_m / 60;
-                            GeoPoint geoPoint = new GeoPoint(latitude, longitude);
-                            SeekBar zoomLevelView = (SeekBar) view.findViewById(R.id.zoomLevel);
-                            MapPosition newMapPosition =
-                                    new MapPosition(geoPoint, (byte) zoomLevelView.getProgress());
-                            MapsforgeActivity.this.mapView.getMapViewPosition().setMapPosition(newMapPosition);
+                            try {
+                                GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+                                SeekBar zoomLevelView = (SeekBar) view.findViewById(R.id.zoomLevel);
+                                MapPosition newMapPosition =
+                                        new MapPosition(geoPoint, (byte) zoomLevelView.getProgress());
+                                MapsforgeActivity.this.mapView.getMapViewPosition().setMapPosition(newMapPosition);
+                            } catch (IllegalArgumentException e) {
+                            }
                         }
                     });
                 }
@@ -620,6 +632,12 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
 
             case R.id.menu_position_last_known:
                 gotoLastKnownPosition();
+                return true;
+
+            case R.id.menu_position_target:
+                GeoPoint geoPoint = navigationOverlay.getTarget();
+                if (geoPoint != null)
+                    this.mapView.getMapViewPosition().setCenter(geoPoint);
                 return true;
 
             case R.id.menu_position_enter_coordinates:
@@ -834,6 +852,10 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
             menu.findItem(R.id.menu_mapfile).setEnabled(false);
         }
 
+        if (navigationOverlay.getTarget() == null) {
+            menu.findItem(R.id.menu_position_target).setEnabled(false);
+        }
+
         return true;
     }
 
@@ -901,6 +923,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
         outState.putBoolean(BUNDLE_SNAP_TO_LOCATION, this.myLocationOverlay.isSnapToLocationEnabled());
         outState.putBoolean(BUNDLE_SHOW_PINS, this.showPins);
         outState.putBoolean(BUNDLE_SHOW_LABELS, this.showLabels);
+        outState.putBoolean(BUNDLE_ALLOW_START_CARTRIDGE, this.allowStartCartridge);
     }
 
     @Override
@@ -925,16 +948,17 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
 
     private void refreshItems() {
         Bundle bundle = getIntent().getExtras();
-        boolean center = bundle != null && bundle.getBoolean("center", false);
-        boolean navigate = bundle != null && bundle.getBoolean("navigate", false);
-        if (bundle != null && bundle.containsKey("items")) {
-            ArrayList<MapPointPack> items = bundle.getParcelableArrayList("items");
+        boolean center = bundle != null && bundle.getBoolean(BUNDLE_CENTER, false);
+        boolean navigate = bundle != null && bundle.getBoolean(BUNDLE_NAVIGATE, false);
+        allowStartCartridge = bundle != null && bundle.getBoolean(BUNDLE_ALLOW_START_CARTRIDGE, false);
+        if (bundle != null && bundle.containsKey(BUNDLE_ITEMS)) {
+            ArrayList<MapPointPack> items = bundle.getParcelableArrayList(BUNDLE_ITEMS);
             showMapPack(items);
         } else {
             showMapPack(VectorMapDataProvider.getInstance().getItems());
         }
         if (center && itemsLatitude != 0 && itemsLongitude != 0) {
-            GeoPoint geoPoint = null;
+            GeoPoint geoPoint;
             if (navigate && this.navigationOverlay.getTarget() != null)
                 geoPoint = this.navigationOverlay.getTarget();
             else
@@ -961,25 +985,25 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     }
 
     private void showMapPack(ArrayList<MapPointPack> packs) {
-        synchronized (this.listOverlay) {
+        synchronized (lock) {
             this.navigationOverlay.setTarget(null);
             itemsLatitude = itemsLongitude = 0;
             int count = 0;
             listOverlay.clear();
             List<OverlayItem> overlayItems = listOverlay.getOverlayItems();
-            List<OverlayItem> overlayLines = new ArrayList<OverlayItem>();
-            List<OverlayItem> overlayPoints = new ArrayList<OverlayItem>();
+            List<OverlayItem> overlayLines = new ArrayList<>();
+            List<OverlayItem> overlayPoints = new ArrayList<>();
             // overlayItems.clear();
             for (MapPointPack pack : packs) {
                 if (pack.isPolygon()) {
-                    List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+                    List<GeoPoint> geoPoints = new ArrayList<>();
                     for (MapPoint mp : pack.getPoints()) {
                         GeoPoint geoPoint = new GeoPoint(mp.getLatitude(), mp.getLongitude());
                         geoPoints.add(geoPoint);
                     }
                     overlayLines.add(createPolyline(geoPoints));
                 } else {
-                    Drawable icon = null;
+                    Drawable icon;
                     if (pack.getIcon() == null) {
                         icon =
                                 getResources().getDrawable(
@@ -1060,7 +1084,7 @@ public class MapsforgeActivity extends MapActivity implements IRefreshable {
     }
 
     private void visibilityChanged() {
-        synchronized (this.listOverlay) {
+        synchronized (lock) {
             List<OverlayItem> overlayItems = listOverlay.getOverlayItems();
             for (int i = 0; i < overlayItems.size(); i++) {
                 OverlayItem item = overlayItems.get(i);
